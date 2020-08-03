@@ -125,9 +125,51 @@ int spawnPipe(char** args, int pipe_r, int pipe_w) {
     return -1;
 }
 
-// Spawn new child process without pipes
-int spawn(char** args) {
-    return spawnPipe(args, 0, 0);
+int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
+    // Return:
+    //  0 - End of recursion
+    // -1 - Process error
+    // -2 - Pipe creation error
+
+    int fds[2] = {0,0};
+    pid_t pid;
+
+    // Return from recursion
+    if (cmd_list[cmd_index] == NULL) {
+        return 0;
+    }
+
+    // Last command should not be piped
+    if (cmd_list[cmd_index+1] != NULL) {
+        if (pipe(fds) < 0) { 
+            printf("Pipe could not be initialized\n"); 
+            return -2; 
+        }
+    }
+
+    // Split command into args
+    char **args = parseArgExec(cmd_list[cmd_index]);
+
+    // Spawn new process
+    // printf("Running: %s\n", args[0]);
+    pid = spawnPipe(args, pipe_r, fds[1]);
+    // printf("PID: %d\n", pid);
+
+    // Only close
+    if (fds[1] != 0)
+        close(fds[1]);
+
+    if (pid > 0) {
+        executeCommands(cmd_list, cmd_index+1, fds[0]);
+        wait(NULL);
+    }
+
+    if (fds[0] != 0)
+        close(fds[0]);
+    
+    free(args);
+
+    return 0;
 }
 
 
@@ -140,12 +182,14 @@ char **readPrompt() {
     int count = 0;
     while (count < BUFFER_SIZE) {
         char c = getchar();
+        // printf("%d ", c);
         buffer[count++] = c;
 
         if (c == EOF || c == '\0' || c == '\n')
             break;
     }
     buffer[count] = '\0';
+    // printf("\n");
     
 
     // Check Crtl+D
@@ -160,7 +204,6 @@ char **readPrompt() {
         return NULL;
     }
 
-
     return parsePipe(buffer);
 }
 
@@ -168,82 +211,22 @@ char **readPrompt() {
 // Prompt; Read input; Run;
 void loop() {
     char **commands;
-    int fds[2][2] = {{0,0},{0,0}};
-    int status;
 
     // Display prompt
     prompt();
 
     // Read command
+    // printf("Awaiting input\n");
     commands = readPrompt();
+    // printf("Input received\n");
 
     // Check empty input
     if (commands == NULL) {
         return;
     }
 
-    int command_count = getStrListSize(commands);
-
-
-    int i = 0;
-    while (commands[i] != NULL) {
-        char **args = parseArgExec(commands[i]);
-
-        // Create pipe ('first' to 'last but one'. This also includes no-pipe-command)
-        if (i < command_count-1) {
-            if (pipe(fds[1]) < 0) { 
-                printf("Pipe could not be initialized\n"); 
-                return; 
-            }
-        } else{
-            fds[1][0] = 0;
-            fds[1][1] = 0;
-        }
-
-
-        child_pid = spawnPipe(args, fds[0][0], fds[1][1]);
-
-        if (child_pid < 0) {
-            break;
-        }
-
-        // Wait current command to return
-        wait(&status);
-        child_pid = -1;
-
-        // Close pipes
-        if (exit_prompt) {
-            // Handle "exit command"
-            close(fds[0][0]);
-            close(fds[1][1]);
-
-            freeStrList(args);
-            freeStrList(commands);
-
-            return;
-        } else if (command_count == 1) {
-            // Only one command: no pipes
-            // No pipe needed
-        } else if (i == 0) {
-            // First command from pipe
-            fds[0][0] = fds[1][0];
-            close(fds[1][1]);
-            fds[0][1] = fds[1][1];
-        } else if (i == command_count-1) {
-            // Last
-            close(fds[0][0]);
-        } else {
-            // Middle
-            close(fds[0][0]);
-            fds[0][0] = fds[1][0];
-            close(fds[1][1]);
-            fds[0][1] = fds[1][1];
-        }
-
-        freeStrList(args);
-        
-        i++;
-    }
+    executeCommands(commands, 0, 0);
+    // printf("End command list\n");
 
     freeStrList(commands);
 }
