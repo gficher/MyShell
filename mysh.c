@@ -13,8 +13,7 @@
 #include <stdbool.h>
 #include <signal.h> 
 
-#include "libparseargexec.h"
-#include "libparsepipe.h"
+#include "libinputparse.h"
 #include "libcdhandler.h"
 #include "libstrlist.h"
 #include "libstrutils.h"
@@ -216,9 +215,7 @@ void loop() {
     prompt();
 
     // Read command
-    // printf("Awaiting input\n");
     commands = readPrompt();
-    // printf("Input received\n");
 
     // Check empty input
     if (commands == NULL) {
@@ -226,7 +223,6 @@ void loop() {
     }
 
     executeCommands(commands, 0, 0);
-    // printf("End command list\n");
 
     freeStrList(commands);
 }

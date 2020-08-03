@@ -1,6 +1,6 @@
 CC = gcc
 
-INCLUDE = libs/libcdhandler.c libs/libstrutils.c libs/libstrlist.c libs/libparseargexec.c libs/libparsepipe.c
+INCLUDE = libs/libcdhandler.c libs/libstrutils.c libs/libstrlist.c libs/libinputparse.c
 INCLUDEDIR = libs
 
 build: mysh
