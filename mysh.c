@@ -17,6 +17,7 @@
 #include "libparsepipe.h"
 #include "libcdhandler.h"
 #include "libstrlist.h"
+#include "libstrutils.h"
 
 #define BUFFER_SIZE 1000
 
@@ -155,10 +156,10 @@ char **readPrompt() {
     }
     
     // Check empty input
-    if (strlen(buffer) == 0 || (strlen(buffer) == 1 && buffer[0] == '\n')) {
+    if (strlen(trimWhitespace(buffer)) == 0 || (strlen(buffer) == 1 && buffer[0] == '\n')) {
         return NULL;
     }
-    
+
 
     return parsePipe(buffer);
 }
