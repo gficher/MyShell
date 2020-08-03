@@ -31,7 +31,7 @@ void prompt();
 char **readPrompt();
 
 int spawnPipe(char** args, int pipe_r, int pipe_w);
-int spawn(char** args);
+int executeCommands(char **cmd_list, int cmd_index, int pipe_r);
 
 void loop();
 int main();
@@ -85,7 +85,6 @@ void prompt() {
 }
 
 
-
 // Spawn new child process using pipes
 int spawnPipe(char** args, int pipe_r, int pipe_w) {
     // Look for internal commands
@@ -124,6 +123,8 @@ int spawnPipe(char** args, int pipe_r, int pipe_w) {
     return -1;
 }
 
+
+// Recursively run all commands
 int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     // Return:
     //  0 - End of recursion
@@ -172,8 +173,7 @@ int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
 }
 
 
-
-// Read user input and return arg array
+// Read user input and return command array
 char **readPrompt() {
     char buffer[BUFFER_SIZE];
 
@@ -207,7 +207,7 @@ char **readPrompt() {
 }
 
 
-// Prompt; Read input; Run;
+// Prompt-input-run cycle
 void loop() {
     char **commands;
 
