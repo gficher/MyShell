@@ -28,3 +28,15 @@ char **parseArgExec(char *cmd) {
 
     return list;
 }
+
+char **parseSemicolon(char *cmd) {
+    char **list;
+    int listSize = 0;
+
+    strlistQuoteSplit(cmd, ';', &list, &listSize);
+
+    // Add NULL terminator (last list element is NULL)
+    list = expandStrList(list, ++listSize);
+
+    return list;
+}

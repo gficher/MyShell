@@ -115,7 +115,7 @@ char **readPrompt() {
         return NULL;
     }
 
-    return parsePipe(buffer);
+    return parseSemicolon(buffer);
 }
 
 // Spawn new child process using pipes
@@ -222,7 +222,16 @@ void loop() {
         return;
     }
 
-    executeCommands(commands, 0, 0);
+    int i = 0;
+    while (commands[i] != NULL) {
+        char **pipe_commands = parsePipe(commands[i]);
+
+        executeCommands(pipe_commands, 0, 0);
+
+        freeStrList(pipe_commands);
+        i++;
+    }
+    
 
     freeStrList(commands);
 }
