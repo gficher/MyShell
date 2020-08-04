@@ -6,8 +6,6 @@
 #include <ctype.h>
 #include <string.h>
 
-#include <stdio.h>
-
 char **createStrList() {
     char **list;
 
@@ -25,8 +23,6 @@ char **expandStrList(char **list, int size) {
 }
 
 void appendStrList(char *str, char ***list, int *size) {
-    printf("'%s'\n", str);
-    
     if (*size == 0) {
         *list = createStrList();
     } else {
