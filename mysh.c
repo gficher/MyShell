@@ -1,5 +1,14 @@
 /*
- Author: Gustavo Ficher (gficher.com)
+Universidade Estadual Paulista - Unesp
+        Câmpus de Rio Claro
+Bacharelado em Ciências da Computação
+
+     Sistemas Operacionais 2
+
+
+Projeto 1 - MyShell básico
+
+Autores: Gustavo Ficher Catarino (me@gficher.com)
          Rafael Altarugio
 */
 
