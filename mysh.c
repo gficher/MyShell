@@ -60,12 +60,10 @@ void prompt() {
     char hostname[HOST_NAME_MAX];
     char *home_dir = getenv("HOME");
     char current_dir[PATH_MAX];
-    // char *current_dir;
     char display_dir[PATH_MAX];
     int homeStart = 0;
 
     getcwd(current_dir, NAME_MAX);
-    // current_dir = get_current_dir_name();
     gethostname(hostname, HOST_NAME_MAX);
 
 
