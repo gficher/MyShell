@@ -127,7 +127,7 @@ int spawnPipe(char** args, int pipe_r, int pipe_w) {
 // Recursively run all commands
 int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     // Return:
-    //  0 - End of recursion
+    //  0 - End of iteration
     // -1 - Process error
     // -2 - Pipe creation error
 
@@ -158,6 +158,7 @@ int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     if (fds[1] != 0)
         close(fds[1]);
 
+    // Only run next command if current command succeeds
     if (pid > 0) {
         executeCommands(cmd_list, cmd_index+1, fds[0]);
         wait(NULL);
@@ -183,19 +184,19 @@ char **readPrompt() {
         // printf("%d ", c);
         buffer[count++] = c;
 
-        if (c == EOF || c == '\0' || c == '\n')
+        if (c == EOF || c == '\0' || c == '\n') {
+            // Check Crtl+D
+            if (c == EOF) {
+                printf("\n");
+                exit_prompt = true;
+                count = 0;
+            }
+
             break;
+        }
     }
     buffer[count] = '\0';
     // printf("\n");
-    
-
-    // Check Crtl+D
-    if (strlen(buffer) == 1 && buffer[0] == EOF) {
-        printf("\n");
-        exit_prompt = true;
-        return NULL;
-    }
     
     // Check empty input
     if (strlen(trimWhitespace(buffer)) == 0 || (strlen(buffer) == 1 && buffer[0] == '\n')) {
