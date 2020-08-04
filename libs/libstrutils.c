@@ -82,7 +82,7 @@ char *trimWhitespace(char *str) {
 char *trimQuotes(char *str) {
 	char *end = str + strlen(str) - 1;
 
-	if (*end == *str) {
+	if ((*str == '\'' || *str == '\"') && (*end == *str)) {
 		str++;
 		*end = '\0';
 	}
