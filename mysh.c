@@ -11,7 +11,7 @@
 #include <limits.h>
 #include <errno.h>
 #include <stdbool.h>
-#include <signal.h> 
+#include <signal.h>
 
 #include "libinputparse.h"
 #include "libcdhandler.h"
@@ -25,7 +25,7 @@ bool exit_prompt = false;
 pid_t child_pid = -1;
 
 
-void sigHandler(int sig);
+void sigHandler(/*int sig*/);
 
 void prompt();
 char **readPrompt();
@@ -39,18 +39,18 @@ int main();
 
 
 // Handle signal calls
-void sigHandler(int sig) {
+void sigHandler(/*int sig*/) {
     return;
-    // printf("SIGINT Task: %d\n", child_pid);
+    // // printf("SIGINT Task: %d\n", child_pid);
 
-    if (child_pid != -1) {
-        // A child process is running, so send it a signal
-        kill(child_pid, SIGINT);
-    } else {
-        // Nothing is running, it's time to go!
-        printf("\n");
-        exit(0);
-    }
+    // if (child_pid != -1) {
+    //     // A child process is running, so send it a signal
+    //     kill(child_pid, SIGINT);
+    // } else {
+    //     // Nothing is running, it's time to go!
+    //     printf("\n");
+    //     exit(0);
+    // }
 }
 
 
@@ -60,10 +60,12 @@ void prompt() {
     char hostname[HOST_NAME_MAX];
     char *home_dir = getenv("HOME");
     char current_dir[PATH_MAX];
+    // char *current_dir;
     char display_dir[PATH_MAX];
     int homeStart = 0;
 
     getcwd(current_dir, NAME_MAX);
+    // current_dir = get_current_dir_name();
     gethostname(hostname, HOST_NAME_MAX);
 
 

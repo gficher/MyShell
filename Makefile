@@ -6,7 +6,7 @@ INCLUDEDIR = libs
 build: mysh
 
 mysh: mysh.c
-	${CC} $^ $(INCLUDE) -o $@ -I$(INCLUDEDIR) -Wall
+	${CC} $^ $(INCLUDE) -o $@ -I$(INCLUDEDIR) -Wall -Wextra -pedantic
 
 clean:
-	rm mysh
+	rm -f mysh
