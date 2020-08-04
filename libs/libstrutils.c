@@ -30,7 +30,7 @@ void strlistQuoteSplit(char *str, const char delim, char ***list, int *listSize)
 				char *appendStr = malloc(str - start + 1);
 				memcpy(appendStr, start, str - start + 1);
 				appendStr[str - start] = '\0';
-				appendStrList(trimWhitespace(trimQuotes(appendStr)), list, listSize);
+				appendStrList(trimQuotes(trimWhitespace(appendStr)), list, listSize);
 				free(appendStr);
 
 				// Update state
@@ -80,21 +80,12 @@ char *trimWhitespace(char *str) {
 }
 
 char *trimQuotes(char *str) {
-	char *end;
+	char *end = str + strlen(str) - 1;
 
-	// Trim leading quote
-	while(*str == '\'' || *str == '\"')
+	if (*end == *str) {
 		str++;
-
-	if (*str == 0)  // String is only spaces
-		return str;
-
-	// Trim trailing quote
-	end = str + strlen(str) - 1;
-	while(end > str && (*end == '\'' || *end == '\"'))
-		end--;
-
-	end[1] = '\0';
+		*end = '\0';
+	}
 
 	return str;
 }
