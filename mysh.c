@@ -85,6 +85,39 @@ void prompt() {
 }
 
 
+// Read user input and return command array
+char **readPrompt() {
+    char buffer[BUFFER_SIZE];
+
+    // Get input char by char
+    int count = 0;
+    while (count < BUFFER_SIZE) {
+        char c = getchar();
+        // printf("%d ", c);
+        buffer[count++] = c;
+
+        if (c == EOF || c == '\0' || c == '\n') {
+            // Check Crtl+D
+            if (c == EOF) {
+                printf("\n");
+                exit_prompt = true;
+                count = 0;
+            }
+
+            break;
+        }
+    }
+    buffer[count] = '\0';
+    // printf("\n");
+    
+    // Check empty input
+    if (strlen(trimWhitespace(buffer)) == 0 || (strlen(buffer) == 1 && buffer[0] == '\n')) {
+        return NULL;
+    }
+
+    return parsePipe(buffer);
+}
+
 // Spawn new child process using pipes
 int spawnPipe(char** args, int pipe_r, int pipe_w) {
     // Look for internal commands
@@ -172,39 +205,6 @@ int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     return 0;
 }
 
-
-// Read user input and return command array
-char **readPrompt() {
-    char buffer[BUFFER_SIZE];
-
-    // Get input char by char
-    int count = 0;
-    while (count < BUFFER_SIZE) {
-        char c = getchar();
-        // printf("%d ", c);
-        buffer[count++] = c;
-
-        if (c == EOF || c == '\0' || c == '\n') {
-            // Check Crtl+D
-            if (c == EOF) {
-                printf("\n");
-                exit_prompt = true;
-                count = 0;
-            }
-
-            break;
-        }
-    }
-    buffer[count] = '\0';
-    // printf("\n");
-    
-    // Check empty input
-    if (strlen(trimWhitespace(buffer)) == 0 || (strlen(buffer) == 1 && buffer[0] == '\n')) {
-        return NULL;
-    }
-
-    return parsePipe(buffer);
-}
 
 
 // Prompt-input-run cycle
