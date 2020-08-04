@@ -155,7 +155,6 @@ int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     pid = spawnPipe(args, pipe_r, fds[1]);
     // printf("PID: %d\n", pid);
 
-    // Only close
     if (fds[1] != 0)
         close(fds[1]);
 
@@ -167,7 +166,7 @@ int executeCommands(char **cmd_list, int cmd_index, int pipe_r) {
     if (fds[0] != 0)
         close(fds[0]);
     
-    free(args);
+    freeStrList(args);
 
     return 0;
 }
