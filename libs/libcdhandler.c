@@ -9,13 +9,18 @@
 
 int cdHandler(char **args) {
     if (args[1] != NULL) {
-        if (args[1][0] == '~') {
+        if (args[1][0] == '~' && args[1][0] == '\0') {
             // Go home
             chdir(getenv("HOME"));
-        } else if (args[1][0] == '*') {
-            // This is the path my source code was located in Windows from WSL
-            // I got tired of retyping it after a while
-            chdir("/mnt/c/Users/gficher/OneDrive/Documentos/Faculdade/7sem/SO2/aula5");
+        } else if (args[1][0] == '~') {
+            // Gome home
+            chdir(getenv("HOME"));
+
+            // Check if there is a relative path
+            if (args[1][1] == '/') {
+                // Continue navigation
+                chdir(args[1]+2);
+            }
         } else {
             // Go wherever else
             if (chdir(args[1]) < 0) {
